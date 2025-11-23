@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Level 3 – Accessibility Basics</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      background: url("background.png") center/cover no-repeat fixed;
+      color: white;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(2px);
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 20px 40px;
+      text-align: center;
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .intro {
+      font-size: 1rem;
+      margin-bottom: 25px;
+      opacity: 0.9;
+    }
+
+    .question-card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: left;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .question-card.locked {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .question-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .option-btn {
+      flex: 1 1 45%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      font-size: 0.95rem;
+      text-align: left;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .option-btn:hover {
+      transform: scale(1.03);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .option-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    .feedback {
+      font-size: 0.9rem;
+      margin-top: 5px;
+      min-height: 1.2em;
+    }
+
+    .feedback.correct {
+      color: #8cff8c;
+    }
+
+    .feedback.hint {
+      color: #ffbf64;
+    }
+
+    .fill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .fill-input {
+      flex: 1 1 180px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.95rem;
+    }
+
+    .check-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: none;
+      background: #ffba3b;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .check-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+
+    .complete-btn {
+      margin-top: 30px;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #ffba3b;
+      color: #000;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s;
+    }
+
+    .complete-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .complete-btn:not(:disabled):hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
+    }
+
+    /* Badge Popup */
+    #badge-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      width: 320px;
+      background: rgba(0, 0, 0, 0.95);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      z-index: 20;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #badge-popup.show-animation {
+      animation: popIn 0.5s ease-out forwards;
+    }
+
+    #badge-popup img {
+      width: 160px;
+      margin-bottom: 15px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    #close-badge {
+      padding: 10px 22px;
+      border: none;
+      border-radius: 25px;
+      background: #ffba3b;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s ease;
+    }
+
+    #close-badge:hover {
+      transform: scale(1.1);
+    }
+
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.6);
+      }
+      80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.06);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes float {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .content {
+        padding-top: 70px;
+      }
+
+      .options {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <div class="content">
+    <h1>Level 3: Accessibility Basics</h1>
+    <p class="intro">
+      Accessibility helps everyone use your website, including people using screen readers or keyboards.
+    </p>
+
+    <!-- Question 1 -->
+    <div class="question-card" id="q1-card">
+      <div class="question-title">
+        1. What is the main purpose of the <code>alt</code> attribute on an <code>&lt;img&gt;</code> tag?
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="checkQ1(false)">
+          To change the image size without using CSS.
+        </button>
+        <button class="option-btn" onclick="checkQ1(true)">
+          To provide a text description for users who cannot see the image.
+        </button>
+        <button class="option-btn" onclick="checkQ1(false)">
+          To add a tooltip that appears on hover only.
+        </button>
+        <button class="option-btn" onclick="checkQ1(false)">
+          To make the image load faster in the browser cache.
+        </button>
+      </div>
+      <p id="q1-feedback" class="feedback"></p>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-card locked" id="q2-card">
+      <div class="question-title">
+        2. Which HTML is more accessible for a navigation section?
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="checkQ2(false)">
+          &lt;div&gt;My links: Home | About | Contact&lt;/div&gt;
+        </button>
+        <button class="option-btn" onclick="checkQ2(true)">
+          &lt;nav&gt;<br>
+          &nbsp;&nbsp;&lt;ul&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&lt;li&gt;&lt;a href=\"#\"&gt;Home&lt;/a&gt;&lt;/li&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&lt;li&gt;&lt;a href=\"#\"&gt;About&lt;/a&gt;&lt;/li&gt;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&lt;li&gt;&lt;a href=\"#\"&gt;Contact&lt;/a&gt;&lt;/li&gt;<br>
+          &nbsp;&nbsp;&lt;/ul&gt;<br>
+          &lt;/nav&gt;
+        </button>
+        <button class="option-btn" onclick="checkQ2(false)">
+          &lt;p&gt;Home, About, Contact&lt;/p&gt;
+        </button>
+        <button class="option-btn" onclick="checkQ2(false)">
+          &lt;span&gt;Home&lt;/span&gt;&lt;span&gt;About&lt;/span&gt;&lt;span&gt;Contact&lt;/span&gt;
+        </button>
+      </div>
+      <p id="q2-feedback" class="feedback"></p>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-card locked" id="q3-card">
+      <div class="question-title">
+        3. Fill in the blank for an accessible image:<br>
+        <code>&lt;img src="cat.jpg" ____="A black cat sitting on a windowsill."&gt;</code>
+      </div>
+      <div class="fill-row">
+        <input
+          type="text"
+          id="q3-input"
+          class="fill-input"
+          placeholder='Type the attribute name, e.g. alt'
+        />
+        <button class="check-btn" onclick="checkQ3()">Check answer</button>
+      </div>
+      <p id="q3-feedback" class="feedback"></p>
+    </div>
+
+    <button class="complete-btn" id="finish-btn" onclick="onLevelComplete()" disabled>
+      Finish Level
+    </button>
+  </div>
+
+  <!-- Badge Popup -->
+  <div id="badge-popup">
+    <img src="badge-3.png" alt="Level Badge" />
+    <h2>Level 3 Completed!</h2>
+    <p>You earned this badge. Great job!</p>
+    <button id="close-badge" onclick="closeBadge()">Continue</button>
+  </div>
+
+  <script>
+  let q1Correct = false;
+  let q2Correct = false;
+  let q3Correct = false;
+
+  let levelScore = 3;
+
+  let q1Attempts = 0, q2Attempts = 0, q3Attempts = 0;
+  let q1Penalized = false, q2Penalized = false, q3Penalized = false;
+
+  function maybePenalize(questionAttempts, penalizedFlagName) {
+    if (questionAttempts === 3 && !window[penalizedFlagName]) {
+      levelScore = Math.max(0, levelScore - 1);
+      window[penalizedFlagName] = true;
+    }
+  }
+
+  function setFeedback(id, isCorrect, hintText) {
+    const el = document.getElementById(id);
+    el.classList.remove("correct", "hint");
+
+    if (isCorrect) {
+      el.textContent = "Correct! You have mastered one more knowledge point.";
+      el.classList.add("correct");
+    } else {
+      el.textContent = "Oops! That looks like incorrect, here is a hint: " + hintText;
+      el.classList.add("hint");
+    }
+  }
+
+  function unlockCard(cardId) {
+    document.getElementById(cardId).classList.remove("locked");
+  }
+
+  function checkQ1(isCorrect) {
+    if (isCorrect) {
+      q1Correct = true;
+      setFeedback("q1-feedback", true, "");
+      unlockCard("q2-card");
+    } else {
+      q1Attempts++;
+      maybePenalize(q1Attempts, "q1Penalized");
+      setFeedback(
+        "q1-feedback",
+        false,
+        "The alt attribute gives a text alternative for users who cannot see the image."
+      );
+    }
+  }
+
+  function checkQ2(isCorrect) {
+    if (!q1Correct) return;
+
+    if (isCorrect) {
+      q2Correct = true;
+      setFeedback("q2-feedback", true, "");
+      unlockCard("q3-card");
+    } else {
+      q2Attempts++;
+      maybePenalize(q2Attempts, "q2Penalized");
+      setFeedback(
+        "q2-feedback",
+        false,
+        "Semantic elements like <nav> help assistive technologies understand page structure."
+      );
+    }
+  }
+
+  function checkQ3() {
+    if (!q2Correct) return;
+
+    const raw = document.getElementById("q3-input").value.trim().toLowerCase();
+    const normalized = raw.replace(/\s+/g, "");
+
+    const isCorrect = normalized === "alt";
+
+    if (isCorrect) {
+      q3Correct = true;
+      setFeedback("q3-feedback", true, "");
+      document.getElementById("finish-btn").disabled = false;
+    } else {
+      q3Attempts++;
+      maybePenalize(q3Attempts, "q3Penalized");
+      setFeedback(
+        "q3-feedback",
+        false,
+        "Use the alt attribute to provide a description of the image."
+      );
+    }
+  }
+
+  function onLevelComplete() {
+    if (!q3Correct) return;
+
+    const badge = document.getElementById("badge-popup");
+    badge.style.display = "block";
+    badge.style.opacity = "1";
+    badge.classList.remove("show-animation");
+    void badge.offsetWidth;
+    badge.classList.add("show-animation");
+
+    localStorage.setItem("level3Completed", "true");
+    localStorage.setItem("level3Score", String(levelScore));
+  }
+
+  function closeBadge() {
+    const badge = document.getElementById("badge-popup");
+    badge.style.opacity = "0";
+    setTimeout(() => {
+      badge.style.display = "none";
+      window.location.href = "index.html";
+    }, 300);
+  }
+</script>
+
+</body>
+</html>

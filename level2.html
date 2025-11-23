@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Level 2 – Headings, Paragraphs & Lists</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      background: url("background.png") center/cover no-repeat fixed;
+      color: white;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(2px);
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 20px 40px;
+      text-align: center;
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .intro {
+      font-size: 1rem;
+      margin-bottom: 25px;
+      opacity: 0.9;
+    }
+
+    .question-card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: left;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .question-card.locked {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .question-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .option-btn {
+      flex: 1 1 45%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      font-size: 0.95rem;
+      text-align: left;
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .option-btn:hover {
+      transform: scale(1.03);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .option-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    .feedback {
+      font-size: 0.9rem;
+      margin-top: 5px;
+      min-height: 1.2em;
+    }
+
+    .feedback.correct {
+      color: #8cff8c;
+    }
+
+    .feedback.hint {
+      color: #ffbf64;
+    }
+
+    .fill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .fill-input {
+      flex: 1 1 180px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.95rem;
+    }
+
+    .check-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: none;
+      background: #ffba3b;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .check-btn:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+
+    .complete-btn {
+      margin-top: 30px;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #ffba3b;
+      color: #000;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s;
+    }
+
+    .complete-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .complete-btn:not(:disabled):hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
+    }
+
+    /* Badge Popup */
+    #badge-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.7);
+      width: 320px;
+      background: rgba(0, 0, 0, 0.95);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      z-index: 20;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #badge-popup.show-animation {
+      animation: popIn 0.5s ease-out forwards;
+    }
+
+    #badge-popup img {
+      width: 160px;
+      margin-bottom: 15px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    #close-badge {
+      padding: 10px 22px;
+      border: none;
+      border-radius: 25px;
+      background: #ffba3b;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s ease;
+    }
+
+    #close-badge:hover {
+      transform: scale(1.1);
+    }
+
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.6);
+      }
+      80% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.06);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes float {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .content {
+        padding-top: 70px;
+      }
+
+      .options {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <div class="content">
+    <h1>Level 2: Headings, Paragraphs & Lists</h1>
+    <p class="intro">
+      Now let’s practice how to structure content using headings, paragraphs, and lists in HTML.
+    </p>
+
+    <!-- Question 1 -->
+    <div class="question-card" id="q1-card">
+      <div class="question-title">
+        1. Which of the following is the best use of headings on a page?
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="checkQ1(false)">
+          Use &lt;h1&gt; for every line so everything looks big and bold.
+        </button>
+        <button class="option-btn" onclick="checkQ1(true)">
+          Use one &lt;h1&gt; for the main title, followed by &lt;h2&gt;, &lt;h3&gt;, etc. for subheadings.
+        </button>
+        <button class="option-btn" onclick="checkQ1(false)">
+          Only use &lt;h6&gt;, because headings should always be as small as possible.
+        </button>
+        <button class="option-btn" onclick="checkQ1(false)">
+          Avoid headings and use &lt;p&gt; for all text.
+        </button>
+      </div>
+      <p id="q1-feedback" class="feedback"></p>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-card locked" id="q2-card">
+      <div class="question-title">
+        2. Which snippet correctly creates an unordered list with three items?
+      </div>
+      <div class="options">
+        <button class="option-btn" onclick="checkQ2(false)">
+          &lt;ul&gt;Item 1, Item 2, Item 3&lt;/ul&gt;
+        </button>
+        <button class="option-btn" onclick="checkQ2(true)">
+          &lt;ul&gt;<br>
+          &nbsp;&nbsp;&lt;li&gt;Item 1&lt;/li&gt;<br>
+          &nbsp;&nbsp;&lt;li&gt;Item 2&lt;/li&gt;<br>
+          &nbsp;&nbsp;&lt;li&gt;Item 3&lt;/li&gt;<br>
+          &lt;/ul&gt;
+        </button>
+        <button class="option-btn" onclick="checkQ2(false)">
+          &lt;li&gt;&lt;ul&gt;Item 1&lt;/ul&gt;&lt;/li&gt;
+        </button>
+        <button class="option-btn" onclick="checkQ2(false)">
+          &lt;list&gt;Item 1&lt;/list&gt;
+        </button>
+      </div>
+      <p id="q2-feedback" class="feedback"></p>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-card locked" id="q3-card">
+      <div class="question-title">
+        3. Fill in the blank to create a paragraph element:<br>
+        <code>____This is a paragraph____</code>
+      </div>
+      <div class="fill-row">
+        <input
+          type="text"
+          id="q3-input"
+          class="fill-input"
+          placeholder='Type something like &lt;p&gt; and &lt;/p&gt;'
+        />
+        <button class="check-btn" onclick="checkQ3()">Check answer</button>
+      </div>
+      <p id="q3-feedback" class="feedback"></p>
+    </div>
+
+    <button class="complete-btn" id="finish-btn" onclick="onLevelComplete()" disabled>
+      Finish Level
+    </button>
+  </div>
+
+  <!-- Badge Popup -->
+  <div id="badge-popup">
+    <img src="badge-2.png" alt="Level Badge" />
+    <h2>Level 2 Completed!</h2>
+    <p>You earned this badge. Great job!</p>
+    <button id="close-badge" onclick="closeBadge()">Continue</button>
+  </div>
+
+  <script>
+    let q1Correct = false;
+    let q2Correct = false;
+    let q3Correct = false;
+
+    function setFeedback(id, isCorrect, hintText) {
+      const el = document.getElementById(id);
+      el.classList.remove("correct", "hint");
+
+      if (isCorrect) {
+        el.textContent = "Correct! You have mastered one more knowledge point. Keep going!";
+        el.classList.add("correct");
+      } else {
+        el.textContent = "Oops! That looks like incorrect, here is a hint: " + hintText;
+        el.classList.add("hint");
+      }
+    }
+
+    function unlockCard(cardId) {
+      document.getElementById(cardId).classList.remove("locked");
+    }
+
+    function checkQ1(isCorrect) {
+      if (isCorrect) {
+        q1Correct = true;
+        setFeedback("q1-feedback", true, "");
+        unlockCard("q2-card");
+      } else {
+        setFeedback(
+          "q1-feedback",
+          false,
+          "Headings should form a clear outline: one main <h1>, then <h2> and below for subtopics."
+        );
+      }
+    }
+
+    function checkQ2(isCorrect) {
+      if (!q1Correct) return;
+
+      if (isCorrect) {
+        q2Correct = true;
+        setFeedback("q2-feedback", true, "");
+        unlockCard("q3-card");
+      } else {
+        setFeedback(
+          "q2-feedback",
+          false,
+          "Each list item needs its own <li> element inside the <ul>."
+        );
+      }
+    }
+
+    function checkQ3() {
+      if (!q2Correct) return;
+
+      const input = document.getElementById("q3-input").value.trim().toLowerCase();
+      const normalized = input.replace(/\s+/g, "");
+
+      // Accept: <p>This is...</p> OR "<p> ... </p>" form as two parts
+      const correctForms = [
+        "<p>thisisaparagraph</p>",
+        "<p></p>", // if they just type tags, still okay
+        "&lt;p&gt;thisisaparagraph&lt;/p&gt;"
+      ];
+
+      // Quick approach: check if input contains "<p>" and "</p>"
+      const hasP = normalized.includes("<p>") && normalized.includes("</p>");
+
+      const isCorrect = hasP || correctForms.includes(normalized);
+
+      if (isCorrect) {
+        q3Correct = true;
+        setFeedback("q3-feedback", true, "");
+        document.getElementById("finish-btn").disabled = false;
+      } else {
+        setFeedback(
+          "q3-feedback",
+          false,
+          "Wrap the text with <p> and </p> to form a paragraph element."
+        );
+      }
+    }
+
+    function onLevelComplete() {
+      if (!q3Correct) return;
+
+      const badge = document.getElementById("badge-popup");
+      badge.style.display = "block";
+      badge.style.opacity = "1";
+      badge.classList.remove("show-animation");
+      void badge.offsetWidth;
+      badge.classList.add("show-animation");
+
+      localStorage.setItem("level2Completed", "true");
+      localStorage.setItem("level2CompletedAt", new Date().toISOString());
+      localStorage.setItem("level2CompletedScore", "3/3");
+    }
+
+    function closeBadge() {
+      const badge = document.getElementById("badge-popup");
+      badge.style.opacity = "0";
+      setTimeout(() => {
+        badge.style.display = "none";
+        window.location.href = "index.html";
+      }, 300);
+    }
+  </script>
+</body>
+</html>
