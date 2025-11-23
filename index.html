@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Learning Game</title>
+<style>
+/* -------------------- BODY -------------------- */
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url('background.png') center/cover no-repeat fixed;
+  color: white;
+}
+
+/* -------------------- TOP BAR -------------------- */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: rgba(0,128,0,0.5);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+  z-index: 100;
+}
+
+.logo-container .logo { height: 40px; width:auto; }
+.user-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 50px;
+}
+.user-container .avatar { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid white; transition: transform 0.2s; }
+.user-container .avatar:hover { transform: scale(1.1); }
+.user-container .username { color:white; font-weight:bold; font-size:16px; }
+.top-btn {
+  background: rgba(255,255,255,0.15);
+  color:white; border:none; border-radius:12px;
+  padding:6px 14px; cursor:pointer; font-weight:bold;
+  transition: transform 0.2s, background 0.2s;
+}
+.top-btn:hover { transform: scale(1.05); background: rgba(255,255,255,0.3); }
+
+/* -------------------- LEFT SIDEBAR (TASKS) -------------------- */
+.sidebar {
+  position: fixed;
+  top: 60px; /* height of top bar */
+  left: 0;
+  width: 250px;
+  height: calc(100% - 60px);
+  background: rgba(0,128,0,0.5);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.3);
+  z-index: 50; /* lower than top-bar */
+}
+
+.sidebar h3 { margin-bottom: 20px; font-size:18px; text-align:center; }
+.task-list { list-style:none; padding:0; margin:0; }
+
+/* -------------------- TASK CHECKBOX STYLE -------------------- */
+.task-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.task-checkbox {
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  border: 3px solid red;
+  border-radius: 4px;
+  margin-right: 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+/* checkbox when checked */
+.task-checkbox:checked::after {
+  content: "✔";
+  color: red;
+  font-size: 20px;
+  position: absolute;
+  left: 4px;
+  top: -3px;
+}
+
+.task-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.task-link { color:white; text-decoration:none; transition:color 0.2s ease; }
+.task-link:hover { color:#ffeb3b; }
+
+/* -------------------- RIGHT SIDEBAR (SCORES) -------------------- */
+.score-sidebar {
+  position: fixed;
+  top: 60px;
+  right: 0;
+  width: 250px;
+  height: calc(100% - 60px);
+  background: rgba(0,128,0,0.5);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  box-shadow: -2px 0 12px rgba(0,0,0,0.3);
+  z-index: 50;
+}
+
+.score-sidebar h3 {
+  margin-bottom: 20px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.score-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.score-list li {
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+/* -------------------- LEVELS GRID -------------------- */
+.levels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  max-width: 900px;
+  margin-top: 100px;   /* space for top bar */
+  margin-left: 270px;  /* space for left sidebar */
+  margin-right: 270px; /* space for right sidebar */
+}
+
+.level-box {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border-radius:18px;
+  padding:25px;
+  text-align:center;
+  box-shadow:0 12px 25px rgba(0,0,0,0.25);
+  transition: transform 0.35s, box-shadow 0.35s;
+}
+.level-box:hover { transform: translateY(-6px); box-shadow:0 18px 35px rgba(0,0,0,0.35); }
+.level-box.locked { opacity:0.35; pointer-events:none; }
+.level-box h2 { font-size:26px; margin-bottom:15px; }
+.level-box button {
+  padding:12px 24px; border:none; border-radius:10px;
+  background: linear-gradient(135deg, #4caf50, #3a8c3f);
+  color:white; font-size:18px; cursor:pointer; transition: background 0.3s, transform 0.2s;
+}
+.level-box button:hover { background: linear-gradient(135deg, #5ed462, #44a84a); transform: scale(1.05); }
+.badge-slot img { width:90px; margin-top:12px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4)); }
+
+/* -------------------- MAIN CONTENT WRAPPER -------------------- */
+.main-content {
+  margin-left: 270px;
+  margin-right: 270px;
+  padding-top: 120px; /* space for top bar */
+  padding-right: 20px;
+  padding-left: 20px;
+  transition: margin-left 0.3s ease, margin-right 0.3s ease;
+}
+
+/* -------------------- RESET BUTTON -------------------- */
+#resetBtn {
+  margin: 30px auto;
+  display:block;
+  padding:12px 25px;
+  font-size:16px;
+  border-radius:12px;
+  border:3px solid;
+  border-image-slice:1;
+  border-image-source: linear-gradient(45deg, red, purple);
+  background: rgba(255,255,255,0.15);
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
+#resetBtn:hover { transform: scale(1.05); }
+
+/* Confirmation pop-up */
+#confirmPopup {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.5);
+  display: none; align-items:center; justify-content:center; z-index:200;
+}
+.popup-content {
+  background: rgba(255,255,255,0.95);
+  padding:25px 35px; border-radius:18px; text-align:center;
+  width:320px; box-shadow:0 12px 30px rgba(0,0,0,0.35);
+}
+.popup-content p { font-size:18px; margin-bottom:20px; color:#000; }
+.popup-buttons button {
+  padding:10px 22px; margin:0 10px; border:none; border-radius:20px;
+  cursor:pointer; font-weight:bold; font-size:16px; transition: transform 0.2s;
+}
+#cancelBtn { background:#ccc; color:#000; }
+#cancelBtn:hover { transform: scale(1.05); }
+#confirmBtn { background: linear-gradient(45deg, red, purple); color:white; }
+#confirmBtn:hover { transform: scale(1.05); }
+
+/* -------------------- RESPONSIVE -------------------- */
+
+/* Medium screens: just reduce columns */
+@media (max-width: 1100px) {
+  .levels {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablets & phones: stack sidebars, remove side margins */
+@media (max-width: 900px) {
+
+  .sidebar,
+  .score-sidebar {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    box-shadow: none;
+    margin-bottom: 16px;
+  }
+
+  .main-content {
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 120px;
+  }
+
+.sidebar {
+  margin-top: 100px;
+}
+
+
+  .levels {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* Small phones: 1 column grid + stacked top bar */
+@media (max-width: 600px) {
+
+  .levels {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .top-bar {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .user-container {
+    margin-top: 8px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="logo-container"><img src="logo.png" alt="Logo" class="logo"></div>
+  <div class="user-container">
+    <img src="avatar.png" alt="Avatar" class="avatar">
+    <span class="username">Your Name</span>
+    <button class="top-btn">Login</button>
+    <button class="top-btn">Profile</button>
+  </div>
+</div>
+
+<!-- LEFT SIDEBAR (TASKS) -->
+<div class="sidebar">
+  <h3>Tasks</h3>
+  <ul class="task-list">
+    <li class="task-item">
+      <label class="task-label">
+        <input type="checkbox" class="task-checkbox" id="task1">
+        <a href="task1.html" class="task-link" data-task="task1">
+          Master HTML structure
+        </a>
+      </label>
+    </li>
+    <li class="task-item">
+      <label class="task-label">
+        <input type="checkbox" class="task-checkbox" id="task2">
+        <a href="task2.html" class="task-link" data-task="task2">
+          Understand headings, paragraphs and lists
+        </a>
+      </label>
+    </li>
+    <li class="task-item">
+      <label class="task-label">
+        <input type="checkbox" class="task-checkbox" id="task3">
+        <a href="task3.html" class="task-link" data-task="task3">
+          Learn Accessibility basics
+        </a>
+      </label>
+    </li>
+  </ul>
+</div>
+
+<!-- RIGHT SIDEBAR (SCORES) -->
+<div class="score-sidebar">
+  <h3>Scores</h3>
+  <ul class="score-list">
+    <li>Level 1: <span id="score1">/|3</span></li>
+    <li>Level 2: <span id="score2">/|3</span></li>
+    <li>Level 3: <span id="score3">/|3</span></li>
+  </ul>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+  <h1 style="text-align:center;">HTML Learning Game</h1>
+
+  <div class="levels">
+    <div class="level-box" id="level1Box">
+      <h2>Level 1</h2>
+      <button onclick="location.href='level1.html'">Start Level 1</button>
+      <div id="badge1" class="badge-slot"></div>
+    </div>
+    <div class="level-box locked" id="level2Box">
+      <h2>Level 2</h2>
+      <button onclick="location.href='level2.html'">Start Level 2</button>
+      <div id="badge2" class="badge-slot"></div>
+    </div>
+    <div class="level-box locked" id="level3Box">
+      <h2>Level 3</h2>
+      <button onclick="location.href='level3.html'">Start Level 3</button>
+      <div id="badge3" class="badge-slot"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESET BUTTON -->
+<button id="resetBtn">Reset Progress</button>
+
+<!-- CONFIRM POPUP -->
+<div id="confirmPopup">
+  <div class="popup-content">
+    <p>Are you sure you want to reset all progress?</p>
+    <div class="popup-buttons">
+      <button id="cancelBtn">Cancel</button>
+      <button id="confirmBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// --------- LEVEL PROGRESS & BADGES + SCORES + TASK CHECKS ---------
+window.onload = function() {
+  // Badges + unlocking levels
+  for (let i = 1; i <= 3; i++) {
+    if (localStorage.getItem(`level${i}Completed`) === 'true') {
+      const badgeSlot = document.getElementById(`badge${i}`);
+      if (badgeSlot) {
+        badgeSlot.innerHTML = `<img src='badge-${i}.png' alt='Badge'>`;
+      }
+    }
+  }
+
+  if (localStorage.getItem('level1Completed') === 'true')
+    document.getElementById('level2Box').classList.remove('locked');
+  if (localStorage.getItem('level2Completed') === 'true')
+    document.getElementById('level3Box').classList.remove('locked');
+
+  // Scores in right sidebar
+  updateScoresUI();
+
+  // Restore task checkbox state from localStorage
+  ['task1', 'task2', 'task3'].forEach(id => {
+    if (localStorage.getItem(id + 'Completed') === 'true') {
+      const cb = document.getElementById(id);
+      if (cb) cb.checked = true;
+    }
+  });
+};
+
+function updateScoresUI() {
+  const level1Completed = localStorage.getItem('level1Completed') === 'true';
+  const level2Completed = localStorage.getItem('level2Completed') === 'true';
+  const level3Completed = localStorage.getItem('level3Completed') === 'true';
+
+  const level2Unlocked = level1Completed;
+  const level3Unlocked = level2Completed;
+
+  const s1 = localStorage.getItem('level1Score');
+  const s2 = localStorage.getItem('level2Score');
+  const s3 = localStorage.getItem('level3Score');
+
+  // Level 1
+  document.getElementById('score1').textContent =
+    (level1Completed && s1 !== null) ? `${s1}|3` : `/|3`;
+
+  // Level 2
+  document.getElementById('score2').textContent =
+    (level2Unlocked && level2Completed && s2 !== null) ? `${s2}|3` : `/|3`;
+
+  // Level 3
+  document.getElementById('score3').textContent =
+    (level3Unlocked && level3Completed && s3 !== null) ? `${s3}|3` : `/|3`;
+}
+
+// --------- RESET BUTTON POPUP ---------
+const resetBtn = document.getElementById('resetBtn');
+const confirmPopup = document.getElementById('confirmPopup');
+const cancelBtn = document.getElementById('cancelBtn');
+const confirmBtn = document.getElementById('confirmBtn');
+
+resetBtn.addEventListener('click', () => { confirmPopup.style.display = 'flex'; });
+cancelBtn.addEventListener('click', () => { confirmPopup.style.display = 'none'; });
+confirmBtn.addEventListener('click', () => {
+  localStorage.clear();
+  confirmPopup.style.display = 'none';
+  location.reload();
+});
+
+// --------- TASK LINKS CHECKBOX + SAVE TO LOCALSTORAGE ---------
+const taskLinks = document.querySelectorAll('.task-link');
+taskLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    const taskId = e.currentTarget.dataset.task;
+    const checkbox = document.getElementById(taskId);
+    if (checkbox) checkbox.checked = true;
+
+    // persist completion so checkbox stays checked next time
+    localStorage.setItem(taskId + 'Completed', 'true');
+    // we do NOT prevent default, so the link still navigates to task1.html, etc.
+  });
+});
+</script>
+
+
+</body>
+</html>

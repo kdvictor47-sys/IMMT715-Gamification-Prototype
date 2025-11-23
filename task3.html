@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task 3 – Accessibility Basics</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url("background.png") center/cover no-repeat fixed;
+      color: white;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 20px 40px;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.3rem;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 25px;
+    }
+
+    .lesson-card {
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      padding: 24px 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      line-height: 1.6;
+      font-size: 0.98rem;
+    }
+
+    .lesson-image {
+  text-align: center;      /* centers inline content like <img> */
+  margin: 20px 0;          /* space above and below the image */
+}
+
+.lesson-image img {
+  max-width: 100%;         /* keep it responsive */
+  height: auto;
+  display: inline-block;
+}
+
+
+    .lesson-card ul {
+      margin-left: 18px;
+      margin-bottom: 14px;
+    }
+
+    .code-block {
+      background: rgba(0,0,0,0.65);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 10px 0 18px;
+      font-family: "Consolas", monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .start-btn {
+      display: inline-block;
+      margin: 30px auto 0;
+      padding: 12px 26px;
+      border-radius: 28px;
+      border: none;
+      background: #ffba3b;
+      color: #000;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .start-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(255,255,255,0.7);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: 0.9rem;
+      color: #ffd48f;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .start-btn.locked-btn {
+  background: rgb(255, 255, 255);
+  color: #888;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .content { padding-top: 60px; }
+      h1 { font-size: 1.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <div class="content">
+    <h1>Task 3: Accessibility Basics</h1>
+    <p class="subtitle">Learn how to make your HTML more inclusive before starting Level 3.</p>
+
+    <div class="lesson-card">
+        <div class="lesson-image">
+            <img src="task3-1.png" alt="task3-1">
+        </div>
+        
+      <p>
+        Web accessibility means building websites that can be used by as many people as possible,
+        including people who use screen readers, keyboard navigation, or other assistive technologies.
+      </p>
+
+      <h3>Alt text for images</h3>
+      <p>
+        The <strong><code>alt</code></strong> attribute on an <code>&lt;img&gt;</code> tag provides
+        a text description of the image. Screen readers read this out loud if the user can’t see
+        the image.
+      </p>
+      <div class="code-block">
+&lt;img src="cat.jpg" alt="A black cat sitting on a windowsill."&gt;
+      </div>
+      <p>
+        Good alt text is concise but meaningful. It should describe the content or purpose of the image,
+        not just say "image" or "picture".
+      </p>
+
+      <h3>Semantic structure</h3>
+      <p>
+        Semantic elements like <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>,
+        <code>&lt;header&gt;</code>, and <code>&lt;footer&gt;</code> give structure to your page.
+        Assistive technologies use these landmarks to jump around quickly.
+      </p>
+      <div class="code-block">
+&lt;nav&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="#home"&gt;Home&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#about"&gt;About&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href="#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;
+      </div>
+
+      <h3>Links and buttons with clear text</h3>
+      <p>
+        Link and button text should clearly say what they do.
+        Avoid vague labels like "Click here". Instead, use text like "Read more about pricing"
+        or "Submit form".
+      </p>
+
+      <h3>Keyboard navigation</h3>
+      <p>
+        Many users navigate with a keyboard using the Tab key to move between focusable elements.
+        Make sure your page can be used without a mouse: links and buttons should be focusable and visible.
+      </p>
+
+      <p>
+        In Level 3, you’ll answer questions about alt attributes, semantic navigation, and other
+        basic accessibility ideas.
+      </p>
+    </div>
+
+    <!-- Start Level 3 button -->
+    <a href="level3.html" class="start-btn" id="start-level3">Start Level 3</a>
+
+    <!-- Optional: link back to homepage -->
+    <br>
+    <a href="index.html" class="back-link">← Back to Homepage</a>
+  </div>
+
+  <script>
+window.addEventListener('DOMContentLoaded', () => {
+  const startBtn3 = document.getElementById('start-level3');
+  const level2Done = localStorage.getItem('level2Completed') === 'true';
+
+  if (!level2Done) {
+    startBtn3.classList.add('locked-btn');
+    startBtn3.textContent = 'Locked – complete Level 2 first';
+
+    startBtn3.addEventListener('click', function (e) {
+      e.preventDefault();
+      alert('Please complete Level 2 before starting Level 3.');
+    });
+  }
+});
+</script>
+
+</body>
+</html>

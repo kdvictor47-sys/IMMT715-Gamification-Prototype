@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task 2 – Headings, Paragraphs & Lists</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url("background.png") center/cover no-repeat fixed;
+      color: white;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 80px 20px 40px;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.3rem;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 25px;
+    }
+
+    .lesson-card {
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      padding: 24px 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+      line-height: 1.6;
+      font-size: 0.98rem;
+    }
+
+    .lesson-image {
+  text-align: center;      /* centers inline content like <img> */
+  margin: 20px 0;          /* space above and below the image */
+}
+
+.lesson-image img {
+  max-width: 100%;         /* keep it responsive */
+  height: auto;
+  display: inline-block;
+}
+
+
+    .lesson-card ul {
+      margin-left: 18px;
+      margin-bottom: 14px;
+    }
+
+    .code-block {
+      background: rgba(0,0,0,0.65);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin: 10px 0 18px;
+      font-family: "Consolas", monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .start-btn {
+      display: inline-block;
+      margin: 30px auto 0;
+      padding: 12px 26px;
+      border-radius: 28px;
+      border: none;
+      background: #ffba3b;
+      color: #000;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .start-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(255,255,255,0.7);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 18px;
+      font-size: 0.9rem;
+      color: #ffd48f;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .start-btn.locked-btn {
+  background: rgb(255, 255, 255);
+  color: #888;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .content { padding-top: 60px; }
+      h1 { font-size: 1.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+
+  <div class="content">
+    <h1>Task 2: Headings, Paragraphs & Lists</h1>
+    <p class="subtitle">Review how to structure text content before starting Level 2.</p>
+
+    <div class="lesson-card">
+        <div class="lesson-image">
+            <img src="task2-1.png" alt="task2-1">
+        <img src="task2-2.png" alt="task2-2">
+        </div>
+        
+      <p>
+        HTML gives you different elements to organize your text so it’s readable and meaningful.
+        Using them correctly helps both users and search engines understand your page.
+      </p>
+
+      <h3>Headings</h3>
+      <p>
+        Headings create an outline for your page. You usually use:
+      </p>
+      <ul>
+        <li><strong>&lt;h1&gt;</strong> for the main page title (use only one per page if possible).</li>
+        <li><strong>&lt;h2&gt;</strong> for major sections.</li>
+        <li><strong>&lt;h3&gt;</strong> and below for subsections inside those sections.</li>
+      </ul>
+
+      <div class="code-block">
+&lt;h1&gt;My Recipe Blog&lt;/h1&gt;
+&lt;h2&gt;Pasta Recipes&lt;/h2&gt;
+&lt;h3&gt;Creamy Mushroom Pasta&lt;/h3&gt;
+      </div>
+
+      <h3>Paragraphs</h3>
+      <p>
+        Use <strong>&lt;p&gt;</strong> to wrap blocks of text. Don’t use multiple
+        &lt;br&gt; tags for spacing — paragraphs are more semantic and accessible.
+      </p>
+
+      <div class="code-block">
+&lt;p&gt;
+  This is a paragraph of text. It might have one or more sentences,
+  but all belong together as a single idea.
+&lt;/p&gt;
+      </div>
+
+      <h3>Lists</h3>
+      <p>
+        Use lists for groups of related items:
+      </p>
+      <ul>
+        <li><strong>&lt;ul&gt;</strong> – unordered list (bullets)</li>
+        <li><strong>&lt;ol&gt;</strong> – ordered list (numbers)</li>
+        <li><strong>&lt;li&gt;</strong> – each individual list item</li>
+      </ul>
+
+      <div class="code-block">
+&lt;h2&gt;Shopping List&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Tomatoes&lt;/li&gt;
+  &lt;li&gt;Pasta&lt;/li&gt;
+  &lt;li&gt;Cheese&lt;/li&gt;
+&lt;/ul&gt;
+      </div>
+
+      <p>
+        In Level 2, you’ll practice picking the correct heading levels and building proper lists
+        with &lt;ul&gt;, &lt;ol&gt;, and &lt;li&gt;.
+      </p>
+    </div>
+
+    <!-- Start Level 2 button -->
+    <a href="level2.html" class="start-btn" id="start-level2">Start Level 2</a>
+
+    <!-- Optional: link back to homepage -->
+    <br>
+    <a href="index.html" class="back-link">← Back to Homepage</a>
+  </div>
+
+  <script>
+  window.addEventListener('DOMContentLoaded', () => {
+  const startBtn2 = document.getElementById('start-level2');
+  const level1Done = localStorage.getItem('level1Completed') === 'true';
+
+  if (!level1Done) {
+    // Visually lock the button
+    startBtn2.classList.add('locked-btn');
+    startBtn2.textContent = 'Locked – complete Level 1 first';
+
+    // Prevent navigation and show message
+    startBtn2.addEventListener('click', function (e) {
+      e.preventDefault();
+      alert('Please complete Level 1 before starting Level 2.');
+    });
+  }
+});
+</script>
+
+</body>
+</html>
